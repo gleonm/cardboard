@@ -46,27 +46,36 @@
   }
 
   function setupCheckboard () {
-    var texture = THREE.ImageUtils.loadTexture(
-      'textures/patterns/checker.png'
+    var loader = new THREE.TextureLoader();
+    loader.load(
+      'textures/patterns/checker.png',
+      function (texture) {
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat = new THREE.Vector2(50, 50);
+        texture.anisotropy = renderer.getMaxAnisotropy();
+
+        var material = new THREE.MeshPhongMaterial({
+          color     : 0xffffff,
+          specular  : 0xffffff,
+          shininess : 60,
+          shading   : THREE.FlatShading,
+          map       : texture
+        });
+
+        var geometry = new THREE.PlaneGeometry(1000, 1000);
+
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh.rotation.x = -Math.PI / 2;
+        scene.add(mesh);
+      },
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+      },
+      function () {
+        console.log('Error loading checkboard');
+      }
     );
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat = new THREE.Vector2(50, 50);
-    texture.anisotropy = renderer.getMaxAnisotropy();
-
-    var material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      specular: 0xffffff,
-      shininess: 20,
-      shading: THREE.FlatShading,
-      map: texture
-    });
-
-    var geometry = new THREE.PlaneGeometry(1000, 1000);
-
-    var mesh = new THREE.Mesh(geometry, material);
-    mesh.rotation.x = -Math.PI / 2;
-    scene.add(mesh);
   }
 
   function setupListeners() {
